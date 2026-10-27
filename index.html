@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Candor Chasma on foot</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Walk on real terrain in Candor Chasma, Mars, built from a HiRISE stereo elevation model and photo.">
+<meta name="theme-color" content="#141210">
+<!-- Link preview (canonical, og:url, og:image). Links with ?at=... share this one card. -->
+<link rel="canonical" href="https://partho.world/mars-walk/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://partho.world/mars-walk/">
+<meta property="og:title" content="Candor Chasma on foot">
+<meta property="og:description" content="Walk on real Mars terrain in your browser: a HiRISE stereo elevation model of Candor Chasma.">
+<meta property="og:image" content="https://partho.world/mars-walk/media/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Layered rock in Candor Chasma, Mars, seen from the ground">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: the terrain fills the screen; readouts sit in the corners like a field instrument, and the loading screen and
+   briefing are cards at lower left. */
+:root {
+  --basalt: #141210;
+  --panel: rgba(20, 18, 16, 0.78);
+  --dust: #f0e7dc;
+  --regolith: #bba894;
+  --sunset: #a3cbe8;
+  --line: rgba(240, 231, 220, 0.16);
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --s-12: 0.75rem; --s-14: 0.875rem; --s-16: 1rem; --s-20: 1.25rem; --s-56: clamp(2.6rem, 7vw, 3.5rem);
+  --edge-l: max(16px, env(safe-area-inset-left, 0px));
+  --edge-r: max(16px, env(safe-area-inset-right, 0px));
+  --edge-t: max(16px, env(safe-area-inset-top, 0px));
+  --edge-b: max(16px, env(safe-area-inset-bottom, 0px));
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; overflow: hidden; background: var(--basalt); color: var(--dust);
+  font-family: var(--f-body); font-size: var(--s-16); line-height: 1.5;
+  -webkit-font-smoothing: antialiased; user-select: none; -webkit-user-select: none;
+}
+a { color: var(--sunset); text-underline-offset: 0.15em; }
+canvas#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: none; }
+canvas#scene.idle { cursor: default; }   /* paused or not started: the pointer shows */
+canvas#scene.locked { cursor: none; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.label { font-family: var(--f-mono); font-size: var(--s-12); color: var(--regolith); }
+.card {
+  position: fixed; left: var(--edge-l); bottom: var(--edge-b); width: min(32rem, calc(100% - 32px));
+  max-height: calc(100% - 32px); overflow-y: auto; padding: 1.5rem; display: grid; gap: 1rem; z-index: 5; box-sizing: border-box;
+}
+.card h1 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: var(--s-56); line-height: 0.9; letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+.card p { margin: 0; max-width: 62ch; }
+
+/* loading */
+#bar { height: 2px; background: var(--line); border-radius: 1px; overflow: hidden; }
+#bar span { display: block; height: 100%; width: 0; background: var(--sunset); transition: width 0.2s; }
+#load-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+#load-pct { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: var(--s-14); }
+#loading { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(20rem, calc(100% - 32px)); box-sizing: border-box; padding: 1.25rem 1.5rem; display: grid; gap: 0.6rem; z-index: 5; }
+#loading h1 { margin: 0; font-family: var(--f-display); font-weight: 800; font-size: 2rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.01em; }
+#loading #load-steps { display: none; }
+#status:empty { display: none; }
+#load-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: var(--s-14); }
+#load-steps li { display: flex; justify-content: space-between; gap: 1rem; color: rgba(187, 168, 148, 0.55); }
+#load-steps li[data-state="active"] { color: var(--dust); }
+#load-steps li[data-state="done"] { color: var(--regolith); }
+#load-steps .n { font-family: var(--f-mono); font-size: var(--s-12); font-variant-numeric: tabular-nums; white-space: nowrap; }
+#load-steps li[data-state="done"] .n::after { content: " ✓"; }
+#status { font-family: var(--f-mono); font-size: var(--s-12); color: var(--sunset); min-height: 1.2em; }
+
+/* briefing */
+#site-text { display: grid; gap: 0.6rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+#sound { display: grid; place-items: center; padding: 0.5rem 0.65rem; }
+#sound[aria-pressed="true"] .off, #sound[aria-pressed="false"] .on { display: none; }
+button { font: 500 var(--s-14)/1 var(--f-body); color: var(--dust); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 0.7rem 1rem; cursor: pointer; }
+button:hover { border-color: var(--regolith); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--sunset); outline-offset: 2px; }
+button.primary { background: var(--sunset); color: #10161b; border-color: var(--sunset); font-weight: 600; }
+button.primary:disabled { opacity: 0.55; cursor: progress; }
+.controls { font-size: var(--s-14); color: var(--regolith); margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem 1.5rem; }
+.controls div { display: grid; grid-template-columns: 4.2rem 1fr; gap: 0.6rem; align-items: baseline; }
+.controls dt { font-family: var(--f-mono); font-size: var(--s-12); color: var(--dust); }
+.controls dd { margin: 0; }
+.fine { font-size: var(--s-12); line-height: 1.55; color: var(--regolith); margin: 0; max-width: 62ch; }
+.links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; font-size: var(--s-14); }
+
+
+/* desktop-only notice */
+/* Phones and tablets: a page about the walk, scrollable, with media slots that collapse when a file is missing. */
+#desktop-only { position: fixed; inset: 0; z-index: 10; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--basalt); user-select: text; -webkit-user-select: text; }
+#desktop-only .wrap { max-width: 34rem; margin: 0 auto; padding: var(--edge-t) var(--edge-r) calc(var(--edge-b) + 1rem) var(--edge-l); display: grid; gap: 1rem; }
+#desktop-only h1 { margin: 0.25rem 0 0; font-family: var(--f-display); font-weight: 800; font-size: 3.2rem; line-height: 0.9; text-transform: uppercase; }
+#desktop-only p { margin: 0; }
+#desktop-only figure { margin: 0; border-radius: 6px; overflow: hidden; background: rgba(240, 231, 220, 0.06); }
+#desktop-only video, #desktop-only img { display: block; width: 100%; height: auto; }
+#desktop-only video { aspect-ratio: 16 / 9; object-fit: cover; }
+#m-views { display: grid; gap: 0.5rem; }
+#m-views img { aspect-ratio: 3 / 2; object-fit: cover; }
+#m-send { width: 100%; padding: 1rem; font-size: var(--s-16); }
+#m-said { min-height: 1.2em; margin-top: 0.4rem; font-family: var(--f-mono); font-size: var(--s-12); color: var(--sunset); }
+
+/* HUD while walking */
+.hud { position: fixed; z-index: 3; pointer-events: none; }
+#mapbox { left: var(--edge-l); bottom: var(--edge-b); padding: 0.7rem; display: grid; gap: 0.55rem; pointer-events: auto; width: min-content; }
+#place { display: grid; gap: 0.15rem; }
+#place .name { font-family: var(--f-display); font-weight: 800; font-size: var(--s-20); text-transform: uppercase; letter-spacing: 0.02em; line-height: 1; }
+#mapstack { position: relative; }
+#mapstack canvas { display: block; border-radius: 3px; }
+#mapdot { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+#drops { position: absolute; inset: 0; }
+#drops button { position: absolute; width: 1.35rem; height: 1.35rem; margin: -0.675rem 0 0 -0.675rem; padding: 0; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--f-mono); font-size: 0.7rem; line-height: 1; background: rgba(20, 18, 16, 0.85); border: 1.4px solid #f0e7dc; color: #f0e7dc; }
+#drops button:hover, #drops button:focus-visible { background: #f0e7dc; color: #141210; }
+#toast { left: 50%; bottom: calc(var(--edge-b) + 0.5rem); transform: translateX(-50%); padding: 0.55rem 0.9rem; font-size: var(--s-14); max-width: min(34rem, calc(100% - 32px)); text-align: center; transition: opacity 0.4s; }
+#toast.off { opacity: 0; }
+#hint { left: 50%; transform: translateX(-50%); bottom: var(--edge-b); padding: 0.55rem 0.9rem; font-size: var(--s-14); color: var(--dust); white-space: nowrap; transition: opacity 1s; }
+#hint.off { opacity: 0; }
+#reticle { left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: rgba(240, 231, 220, 0.55); }
+#fade { position: fixed; inset: 0; background: var(--basalt); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 4; }
+#fade.on { opacity: 1; }
+#debug { left: 50%; top: var(--edge-t); transform: translateX(-50%); padding: 0.4rem 0.6rem; font-family: var(--f-mono); font-size: var(--s-12); }
+/* Touch controls: kept only because main.js still binds them; phones and tablets get #desktop-only instead. */
+#touch { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+#stick, #knob { position: absolute; }
+
+@media (prefers-reduced-motion: reduce) { #toast, #hint, #fade, #bar span { transition: none; } }
+</style>
+</head>
+<body>
+<canvas id="scene" class="idle" aria-label="First-person view on the surface of Mars"></canvas>
+<div id="fade"></div>
+
+<!-- HUD while walking: nothing by default. M shows #mapbox: the place name and the map with numbered start points.
+     #hint shows for 12 s after each start. -->
+<div id="mapbox" class="hud panel" hidden>
+  <div id="place"><span class="name">Candor Chasma</span></div>
+  <div id="mapstack"><canvas id="mapbase"></canvas><canvas id="mapdot"></canvas><div id="drops" role="group" aria-label="Start points"></div></div>
+</div>
+<div id="reticle" class="hud" hidden></div>
+<div id="hint" class="hud panel" hidden>M map · C share · Esc pause</div>
+<div id="toast" class="hud panel off" role="status" aria-live="polite"></div>
+<div id="debug" class="hud panel" hidden></div>
+<div id="touch" hidden>
+  <div id="stick"><div id="knob"></div></div>
+  <div id="tbtns"><button id="t-run" type="button">Run</button><button id="t-jump" type="button">Jump</button><button id="t-pause" type="button">Pause</button></div>
+</div>
+
+<!-- Loading: a small centred card. main.js sets the bar width, #status (errors), and each step's data-state; the step list is
+     not shown, so the first thing a visitor waits through is short. -->
+<section id="loading" class="panel" aria-labelledby="load-title" aria-busy="true">
+  <h1 id="load-title">Candor Chasma</h1>
+  <div id="load-head"><span class="label">loading</span><span id="load-pct" class="label">0%</span></div>
+  <div id="bar"><span></span></div>
+  <ol id="load-steps">
+    <li data-step="dtm" data-state="active"><span>Ground shape: HiRISE elevation model, 1 m</span><span class="n"></span></li>
+    <li data-step="photo"><span>Ground photo: HiRISE</span><span class="n"></span></li>
+    <li data-step="around"><span>Surrounding land: CTX, HRSC and MOLA</span><span class="n"></span></li>
+    <li data-step="build"><span>Building the ground, rocks and light</span><span class="n"></span></li>
+  </ol>
+  <div id="status" aria-live="polite">downloading terrain and photo…</div>
+</section>
+
+
+<!-- Pause screen (Esc): where you are, what is real, the controls, and the how-it-was-made page. -->
+<section id="brief" class="card panel" aria-labelledby="brief-title" hidden>
+  <span class="label">Valles Marineris, Mars</span>
+  <h1 id="brief-title">Candor Chasma</h1>
+  <div class="actions">
+    <button id="start" class="primary" type="button" disabled>resume walking</button>
+    <button id="sound" type="button" aria-pressed="true" aria-label="Sound" title="Sound (best with headphones)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path class="on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+  </div>
+  <dl class="controls" id="controls-desk">
+    <div><dt>Shift</dt><dd>run</dd></div>
+    <div><dt>Space</dt><dd>jump</dd></div>
+    <div><dt>M</dt><dd>map</dd></div>
+    <div><dt>1–4</dt><dd>start points</dd></div>
+    <div><dt>C</dt><dd>share this view</dd></div>
+  </dl>
+  <p class="controls" id="controls-touch" hidden></p>
+  <div class="links"><a href="how.html">how it was made</a></div>
+</section>
+
+
+<!-- Phones and tablets. Media sources sit in data-src and are set only here, so desktops never fetch them. -->
+<div id="desktop-only" hidden>
+  <div class="wrap">
+    <div><span class="label">Valles Marineris, Mars</span><h1>Candor Chasma</h1></div>
+    <p>A walk on real Mars terrain, built from HiRISE stereo images.</p>
+    <p class="fine">The walk runs in Chrome, Safari or Firefox on a desktop or laptop, with a keyboard and mouse.</p>
+    <div><button id="m-send" class="primary" type="button">Send this to my desktop</button><div id="m-said" aria-live="polite"></div></div>
+    <div id="m-views">
+      <figure><img data-src="media/view1.jpg" alt="Start 1: a valley floor between layered ridges"></figure>
+      <figure><img data-src="media/view2.jpg" alt="Start 2: a knob of layered rock"></figure>
+      <figure><img data-src="media/view3.jpg" alt="Start 3: rolling ground toward the canyon wall"></figure>
+    </div>
+    <p class="fine">Data: NASA/JPL/University of Arizona (HiRISE), USGS Astrogeology, NASA/JPL/MSSS (CTX), ESA/DLR/FU Berlin (HRSC), NASA/GSFC (MOLA), NASA/JPL-Caltech (InSight), NASA/JPL-Caltech/LANL/CNES/CNRS/ISAE-Supaero (SuperCam audio).</p>
+  </div>
+</div>
+
+<script>
+// Page-only UI: device check and the loading-to-brief swap. The 3D scene is in main.js.
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  // Phones and tablets get the page in #desktop-only, and main.js and three.js are not loaded (see the loader below).
+  if (matchMedia("(pointer: coarse)").matches && !matchMedia("(any-pointer: fine)").matches) {
+    document.documentElement.classList.add("no-walk"); $("desktop-only").hidden = false; $("loading").hidden = true;
+    for (const el of $("desktop-only").querySelectorAll("[data-src]")) {
+      const fig = el.closest("figure");
+      el.addEventListener("error", () => { const box = fig.parentElement; fig.remove(); if (box.id === "m-views" && !box.children.length) box.remove(); });   // a missing file removes its slot
+      if (el.dataset.poster) el.poster = el.dataset.poster;
+      el.src = el.dataset.src;
+    }
+    const url = location.href.split("#")[0], said = (t) => { $("m-said").textContent = t; };
+    const mail = () => { location.href = "mailto:?subject=" + encodeURIComponent(document.title) + "&body=" + encodeURIComponent(url); };
+    $("m-send").addEventListener("click", async () => {
+      if (navigator.share) {
+        try { await navigator.share({ title: document.title, url }); } catch (e) { if (e.name !== "AbortError") mail(); }
+      } else if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(url); said("Link copied. Open it on your computer."); } catch (e) { mail(); }
+      } else mail();
+    });
+  }
+  // main.js enables #start when the scene is ready: the loading card goes and the scene is all that shows. The bar width gives the percentage.
+  const start = $("start"), fill = $("bar").firstElementChild;
+  new MutationObserver(() => { if (!start.disabled) $("loading").hidden = true; }).observe(start, { attributes: true, attributeFilter: ["disabled"] });
+  new MutationObserver(() => { $("load-pct").textContent = Math.floor(parseFloat(fill.style.width) || 0) + "%"; }).observe(fill, { attributes: true, attributeFilter: ["style"] });
+})();
+</script>
+<!-- three.js r186, served from vendor/ (three.module.js imports three.core.js from the same folder). -->
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
+<script>
+// main.js (and three.js, 2 MB) load only where the walk can run.
+if (!document.documentElement.classList.contains("no-walk")) {
+  const s = document.createElement("script"); s.type = "module"; s.src = "main.js"; document.body.appendChild(s);
+}
+</script>
+</body>
+</html>

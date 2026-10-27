@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it was made · Candor Chasma on foot</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="How the Candor Chasma walk was made: what was measured on Mars, what was added, and where each piece comes from.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  --basalt: #141210;
+  --panel: rgba(20, 18, 16, 0.78);
+  --dust: #f0e7dc;
+  --regolith: #bba894;
+  --sunset: #a3cbe8;
+  --line: rgba(240, 231, 220, 0.16);
+  --f-display: "Big Shoulders Display", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --s-12: 0.75rem; --s-14: 0.875rem; --s-16: 1rem; --s-20: 1.25rem; --s-56: clamp(2.6rem, 7vw, 3.5rem);
+  color-scheme: dark;
+}
+html { background: var(--basalt); }
+body {
+  margin: 0; color: var(--dust); background: var(--basalt);
+  font-family: var(--f-body); font-size: var(--s-16); line-height: 1.55; -webkit-font-smoothing: antialiased;
+}
+a { color: var(--sunset); text-underline-offset: 0.15em; }
+a:focus-visible { outline: 2px solid var(--sunset); outline-offset: 2px; }
+.label { font-family: var(--f-mono); font-size: var(--s-12); color: var(--regolith); }
+main { width: min(60rem, calc(100% - 32px)); margin: 0 auto; padding: 2.5rem 0 4rem; }
+header.top { display: grid; gap: 0.75rem; padding-bottom: 1.5rem; }
+h1 { margin: 0; font-size: 2.2rem; font-weight: 600; line-height: 1.15; text-wrap: balance; }
+h2 { margin: 0 0 0.75rem; font-size: 1.4rem; font-weight: 600; line-height: 1.2; }
+section { padding-top: 2.5rem; margin-top: 2.5rem; border-top: 1px solid var(--line); }
+p { margin: 0 0 0.75rem; max-width: 66ch; }
+figure { margin: 1.25rem 0 1.5rem; }
+figure .frame { background: rgba(240, 231, 220, 0.05); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+figure img { display: block; width: 100%; height: auto; max-height: 75vh; object-fit: contain; }
+.pair { display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; align-items: start; }
+.pair figure { margin: 0; }
+figcaption { margin-top: 0.5rem; font-family: var(--f-mono); font-size: var(--s-12); color: var(--regolith); line-height: 1.5; max-width: 80ch; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
+ul.plain { margin: 0 0 0.75rem; padding: 0; list-style: none; display: grid; gap: 0.35rem; font-size: var(--s-14); }
+ul.plain li { max-width: 80ch; }
+ul.plain b { font-weight: 600; }
+.fine { font-size: var(--s-14); color: var(--regolith); }
+@media (max-width: 760px) { .cols, .pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+<header class="top">
+  <a href="index.html">← back to the walk</a>
+  <h1>How it was made</h1>
+</header>
+<figure>
+  <div class="frame"><img src="media/og.jpg" alt="Layered ridges in Candor Chasma, seen from the walk."></div>
+  <figcaption>From the walk, near Start 1.</figcaption>
+</figure>
+
+<section id="where">
+  <h2>The place</h2>
+  <figure>
+    <div class="frame"><img src="media/how/strip.jpg" alt="HiRISE image PSP_001918_1735 of Candor Chasma with the 4 by 4 kilometre walk area outlined and the four start points numbered." loading="lazy"></div>
+    <figcaption>HiRISE image PSP_001918_1735. The square is the 4 × 4 km you can walk; the numbers are the start points.</figcaption>
+  </figure>
+  <p>Candor Chasma is a canyon in the middle of Valles Marineris. Its floor is about 2 km of layered rock. The walk is inside one HiRISE stereo strip, the only ground here measured finely enough to walk on.</p>
+</section>
+
+<section id="ground">
+  <h2>The ground</h2>
+  <figure>
+    <div class="frame"><img src="media/how/heights.jpg" alt="Hillshaded 1 metre height map of the walk area, coloured by height." loading="lazy"></div>
+    <figcaption>Heights of the walk area, one every metre (DTEEC_001918_1735_001984_1735_U01).</figcaption>
+  </figure>
+  <p>HiRISE photographed this ground twice from slightly different angles, and the pair gives its height. Beyond the 4 km square the land comes from coarser maps: CTX (20 m), then HRSC and MOLA (200 m), out to 240 km.</p>
+</section>
+
+<section id="photo">
+  <h2>The photo</h2>
+  <figure>
+    <div class="frame"><img src="media/how/detail.jpg" alt="One 128 metre piece of ground: the 1 metre heights shaded on the left, the 25 centimetre photo on the right." loading="lazy"></div>
+    <figcaption>One 128 m piece. Left: the heights. Right: the 25 cm photo.</figcaption>
+  </figure>
+  <p>The HiRISE photo, 25 cm per pixel, is laid on the heights. It is black and white; the colour is a palette applied to its brightness. It was taken on 23 December 2006 at 15:30 local time with the sun 35° up. That sun's shading was divided out using the heights, so the walk can light the ground with its own sun. The sun starts where it was and moves at the rate of a Mars day.</p>
+</section>
+
+<section id="close">
+  <h2>Up close</h2>
+  <div class="pair">
+    <figure>
+      <div class="frame"><img src="media/how/close.jpg" alt="Close view from the walk: a rock, pebbles and fine grain on the ground." loading="lazy"></div>
+      <figcaption>From the walk. The rock, the pebbles and the grain are added.</figcaption>
+    </figure>
+    <figure>
+      <div class="frame"><img src="media/how/insight.jpg" alt="Grey close-up of Mars soil with small stones, from InSight's arm camera." loading="lazy"></div>
+      <figcaption>Where the grain comes from: InSight's arm camera, 2 mm per pixel, Elysium Planitia.</figcaption>
+    </figure>
+  </div>
+  <p>HiRISE sees nothing much smaller than a metre, so detail near you is added. Rocks and pebbles are placed at random, as many as the photo's slope and darkness suggest. The grain is a real photo of Mars ground from another place; only detail under 8 cm is used, so the brightness stays Candor's.</p>
+</section>
+
+<section id="walker">
+  <h2>Walking</h2>
+  <p>You are 1.80 m tall, with no suit, in 38% of Earth's gravity. You walk at 0.94 m/s, the pace measured for Mars gravity (Cavagna et al. 1998), slow down on slopes as Tobler's hiking rule says, slip on sand steeper than 31°, and jump 1.7 m.</p>
+</section>
+
+<section id="sound">
+  <h2>Sound</h2>
+  <p>The wind was recorded by Perseverance's microphone in Jezero crater, on the other side of Mars. On Mars it is about as loud as a quiet room and mostly below 300 Hz, so headphones help.</p>
+</section>
+
+<section id="not-yet">
+  <h2>Not right yet</h2>
+  <ul class="plain">
+    <li>The sky colour is painted, not computed from Mars dust.</li>
+    <li>The ground reflects light in the simplest way (Lambert). Real Mars soil is brighter with the sun behind you.</li>
+    <li>Rock sizes do not follow the measured Mars rock size law (Golombek and Rapp 1997).</li>
+  </ul>
+</section>
+
+<section id="credits">
+  <h2>Credits</h2>
+  <ul class="plain">
+    <li><b>HiRISE images and height models.</b> NASA/JPL/University of Arizona; height models by USGS Astrogeology.</li>
+    <li><b>CTX.</b> NASA/JPL/MSSS. <b>HRSC.</b> ESA/DLR/FU Berlin. <b>MOLA.</b> NASA/GSFC. <b>InSight IDC.</b> NASA/JPL-Caltech.</li>
+    <li><b>SuperCam audio, sols 4 and 215.</b> NASA/JPL-Caltech/LANL/CNES/CNRS/INTA-CSIC/Space Science Institute/ISAE-Supaero, from the NASA Planetary Data System, Geosciences Node.</li>
+  </ul>
+  <p class="fine">No endorsement by any of the sources is implied. Drawn with three.js.</p>
+</section>
+
+<section id="sources">
+  <h2>Sources</h2>
+  <ul class="plain">
+    <li>Murchie et al. 2009, <a href="https://doi.org/10.1029/2009JE003343">JGR 114, E00D05</a>; Okubo et al. 2008, <a href="https://doi.org/10.1029/2008JE003181">JGR 113, E12002</a>. The layered rocks of Candor Chasma.</li>
+    <li>Cavagna et al. 1998, <a href="https://doi.org/10.1038/31374">Nature 393:636</a>. Walking speed at Mars gravity.</li>
+    <li>NASA/TP-2009-214796, EVA Walkback Test, Norcross et al. Walking at 3/8 g.</li>
+    <li>Tobler 1993, NCGIA Technical Report 93-1. Walking speed on slopes.</li>
+    <li>Atwood-Stone and McEwen 2013, <a href="https://doi.org/10.1002/grl.50586">GRL 40:2929</a>. How steep Mars sand stands.</li>
+    <li>Golombek and Rapp 1997, <a href="https://doi.org/10.1029/96JE03319">JGR 102</a>. Rock sizes on Mars.</li>
+    <li>Maurice et al. 2022, <a href="https://doi.org/10.1038/s41586-022-04679-0">Nature 605:653</a>. Sound on Mars.</li>
+    <li>Stott et al. 2023, <a href="https://doi.org/10.1029/2022JE007547">JGR Planets 128</a>. Catalogue of SuperCam recordings.</li>
+  </ul>
+</section>
+
+</main>
+</body>
+</html>

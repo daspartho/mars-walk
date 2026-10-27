@@ -1,0 +1,177 @@
+{
+ "reference_pressure_pa": 2e-05,
+ "wind": [
+  {
+   "id": "wind_sol4",
+   "file": "wind_sol4.opus",
+   "label": "steady breeze with gusts",
+   "duration_s": 35.0,
+   "loop_start_s": 0.1,
+   "loop_end_s": 35.1,
+   "sample_rate": 48000,
+   "codec": "Opus 32k mono",
+   "pa_per_full_scale": 0.033843,
+   "level": {
+    "leq_db": 36.2,
+    "leq_dba": 10.7,
+    "l10_db": 38.9,
+    "l50_db": 34.0,
+    "l90_db": 26.6,
+    "lmax_1s_db": 44.4,
+    "peak_pa": 0.0302,
+    "octave_bands_db": {
+     "16": 28.3,
+     "31.5": 32.7,
+     "63": 30.7,
+     "125": 24.0,
+     "250": 15.4
+    }
+   },
+   "level_note": "Outside sound pressure at the SuperCam microphone (2.1 m above ground), 10-300 Hz after filtering, dB re 20 uPa. Lxx are percentiles of 1 s levels (L10 exceeded 10 % of the time). pa_per_full_scale converts a decoded sample (1.0 = full scale) to pascals.",
+   "source": {
+    "product": "scam_0004_0667311609_463_ca2_scam15104_atm__________________00p02.fits",
+    "pds": "https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_supercam/data_calibrated_audio/sol_00004/",
+    "units": "Pa (SuperCam EDR/RDR SIS JPL D-99966 v5.0, sec. 5.1.6, 5.4.2)",
+    "sol": 4,
+    "ltst": "16:14:48",
+    "ls_deg": 7.67,
+    "mic_gain": 0,
+    "mic_sample_rate": 100000,
+    "segment_s": [
+     2.0,
+     40.0
+    ],
+    "meda_wind_ms": null,
+    "meda_pressure_pa": null,
+    "note": "first SuperCam wind recording, mast deployed"
+   },
+   "processing": [
+    "mean removed",
+    "notch 195.3 Hz Q30 (rover/instrument line)",
+    "low-pass 300 Hz Butterworth 4th order zero-phase (Maurice et al. 2022: wind audible to ~300 Hz)",
+    "high-pass 10 Hz Butterworth 2nd order zero-phase (design choice)",
+    "loop: last 3 s crossfaded into the start, equal power",
+    "resampled to 48 kHz",
+    "0.1 s of wrap-around added at each end; loop between loop_start_s and loop_end_s",
+    "peak normalised to -1 dBFS, scale stored in pa_per_full_scale",
+    "Opus 32k"
+   ],
+   "credit": "NASA/JPL-Caltech/LANL/CNES/CNRS/ISAE-Supaero"
+  },
+  {
+   "id": "wind_sol215_gusts",
+   "file": "wind_sol215_gusts.opus",
+   "label": "lulls and strong gusts",
+   "duration_s": 54.0,
+   "loop_start_s": 0.1,
+   "loop_end_s": 54.1,
+   "sample_rate": 48000,
+   "codec": "Opus 32k mono",
+   "pa_per_full_scale": 0.025004,
+   "level": {
+    "leq_db": 35.0,
+    "leq_dba": 8.8,
+    "l10_db": 39.9,
+    "l50_db": 25.4,
+    "l90_db": 18.9,
+    "lmax_1s_db": 45.1,
+    "peak_pa": 0.0223,
+    "octave_bands_db": {
+     "16": 25.3,
+     "31.5": 31.3,
+     "63": 31.2,
+     "125": 21.9,
+     "250": 11.6
+    }
+   },
+   "level_note": "Outside sound pressure at the SuperCam microphone (2.1 m above ground), 10-300 Hz after filtering, dB re 20 uPa. Lxx are percentiles of 1 s levels (L10 exceeded 10 % of the time). pa_per_full_scale converts a decoded sample (1.0 = full scale) to pascals.",
+   "source": {
+    "product": "scam_0215_0686020522_057_ca2_scam01215_atm__________________01p02.fits",
+    "pds": "https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_supercam/data_calibrated_audio/sol_00215/",
+    "units": "Pa (SuperCam EDR/RDR SIS JPL D-99966 v5.0, sec. 5.1.6, 5.4.2)",
+    "sol": 215,
+    "ltst": "11:02:28",
+    "ls_deg": 104.96,
+    "mic_gain": 2,
+    "mic_sample_rate": 25000,
+    "segment_s": [
+     101.0,
+     158.0
+    ],
+    "meda_wind_ms": 5.73,
+    "meda_pressure_pa": 677.9,
+    "note": "dust-devil recording (Murdoch et al. 2022, doi:10.1038/s41467-022-35100-z); vortex in the first ~15 s, not used"
+   },
+   "processing": [
+    "mean removed",
+    "notch 195.3 Hz Q30 (rover/instrument line)",
+    "low-pass 300 Hz Butterworth 4th order zero-phase (Maurice et al. 2022: wind audible to ~300 Hz)",
+    "high-pass 10 Hz Butterworth 2nd order zero-phase (design choice)",
+    "loop: last 3 s crossfaded into the start, equal power",
+    "resampled to 48 kHz",
+    "0.1 s of wrap-around added at each end; loop between loop_start_s and loop_end_s",
+    "peak normalised to -1 dBFS, scale stored in pa_per_full_scale",
+    "Opus 32k"
+   ],
+   "credit": "NASA/JPL-Caltech/LANL/CNES/CNRS/INTA-CSIC/Space Science Institute/ISAE-Supaero"
+  },
+  {
+   "id": "wind_sol215_light",
+   "file": "wind_sol215_light.opus",
+   "label": "light, mostly calm",
+   "duration_s": 45.0,
+   "loop_start_s": 0.1,
+   "loop_end_s": 45.1,
+   "sample_rate": 48000,
+   "codec": "Opus 32k mono",
+   "pa_per_full_scale": 0.015419,
+   "level": {
+    "leq_db": 28.5,
+    "leq_dba": 4.8,
+    "l10_db": 33.0,
+    "l50_db": 22.5,
+    "l90_db": 18.4,
+    "lmax_1s_db": 39.5,
+    "peak_pa": 0.0137,
+    "octave_bands_db": {
+     "16": 20.2,
+     "31.5": 24.7,
+     "63": 22.9,
+     "125": 15.6,
+     "250": 11.2
+    }
+   },
+   "level_note": "Outside sound pressure at the SuperCam microphone (2.1 m above ground), 10-300 Hz after filtering, dB re 20 uPa. Lxx are percentiles of 1 s levels (L10 exceeded 10 % of the time). pa_per_full_scale converts a decoded sample (1.0 = full scale) to pascals.",
+   "source": {
+    "product": "scam_0215_0686036940_180_ca2_scam04215_atm__________________01p02.fits",
+    "pds": "https://pds-geosciences.wustl.edu/m2020/urn-nasa-pds-mars2020_supercam/data_calibrated_audio/sol_00215/",
+    "units": "Pa (SuperCam EDR/RDR SIS JPL D-99966 v5.0, sec. 5.1.6, 5.4.2)",
+    "sol": 215,
+    "ltst": "15:28:49",
+    "ls_deg": 105.05,
+    "mic_gain": 2,
+    "mic_sample_rate": 25000,
+    "segment_s": [
+     100.0,
+     148.0
+    ],
+    "meda_wind_ms": 5.81,
+    "meda_pressure_pa": 671.0,
+    "note": "afternoon recording, weak gusts"
+   },
+   "processing": [
+    "mean removed",
+    "notch 195.3 Hz Q30 (rover/instrument line)",
+    "low-pass 300 Hz Butterworth 4th order zero-phase (Maurice et al. 2022: wind audible to ~300 Hz)",
+    "high-pass 10 Hz Butterworth 2nd order zero-phase (design choice)",
+    "loop: last 3 s crossfaded into the start, equal power",
+    "resampled to 48 kHz",
+    "0.1 s of wrap-around added at each end; loop between loop_start_s and loop_end_s",
+    "peak normalised to -1 dBFS, scale stored in pa_per_full_scale",
+    "Opus 32k"
+   ],
+   "credit": "NASA/JPL-Caltech/LANL/CNES/CNRS/INTA-CSIC/Space Science Institute/ISAE-Supaero"
+  }
+ ],
+ "licence": "NASA content is generally not subject to US copyright (nasa.gov/nasa-brand-center/images-and-media/); PDS data are public. Credit the source; do not imply endorsement."
+}
